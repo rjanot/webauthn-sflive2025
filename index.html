@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Passkeys pour une authentification fluide et sécurisée - Rémi Janot - SymfonyLive Paris 2025</title>
+
+		<meta name="description" content="Dites adieu aux mots de passe fragiles et aux processus de connexion fastidieux ! Les passkeys, une nouvelle technologie d'authentification native des navigateurs et systèmes d'exploitation, promettent une expérience utilisateur fluide et sécurisée. Dans cette conférence, nous explorerons le potentiel révolutionnaire des passkeys pour votre site web en abordant les sujets suivants : Présentation des passkeys / Intégration des passkeys dans les applications Symfony : démonstration pratique et bonnes pratiques / Cas d'utilisation concrets : authentification client, paiements sécurisés, gestion de comptes / Impact sur la sécurité et l'expérience utilisateur : vers un futur sans friction et sans compromis">
+		<meta name="author" content="Rémi Janot">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/white.css" id="theme">
+		<style>
+			:root {
+				--r-heading-margin: 0 0 40px 0;
+				--r-block-margin: 40px;
+			}
+			li {
+				margin-bottom: 15px;
+			}
+			.reveal pre {
+				margin: 0;
+				width: 100%;
+			}
+		</style>
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h3>Passkeys et WebAuthn</h3>
+					<p>
+						<small>Pour une authentification fluide et sécurisée</small>
+					</p>
+					<p>
+						<img src="./images/sfliveparis2025_header.jpg" height="150"/>
+					</p>
+					<small>
+						Rémi JANOT
+						<br>
+						<a href="https://www.linkedin.com/in/rjanot/" target="_blank">
+							<img src="./images/linkedin.png" height="26" style="margin: 0 !important;"/>
+						</a> |
+						<a href="mailto:%72%2e%6a%61%6e%6f%74%40%67%6d%61%69%6c%2e%63%6f%6d" target="_blank">
+							r<b style="display: none">.remove.this</b>.janot@gmail.com</span>
+						</a>
+					</small>
+					<aside class="notes">
+						<p>Bonjour tout le monde!</p>
+
+						<p>Bienvenue ! Pour les 30 prochaines minutes, nous allons parler de l'authentification à l'aide de Passkey et de l'API WebAuthn </p>
+					</aside>
+				</section>
+
+				<section>
+					<h3 style="margin-bottom: 0">1.</h3>
+					<h4 style="margin-bottom: 80px">Quel est le problème à résoudre ?</h4>
+					<h3 style="margin-bottom: 0">2.</h3>
+					<h4 style="margin-bottom: 80px">Principe de WebAuthn</h4>
+					<h3 style="margin-bottom: 0">3.</h3>
+					<h4 style="margin-bottom: 80px">Intégration avec Symfony</h4>
+				</section>
+
+				<section>
+					<h3>Qui suis-je ?</h3>
+					<table>
+						<tr>
+							<td width="33%">
+								<div class="fragment" style="text-align: center">
+									<p>10100<p></p>
+									<img src="./images/where-i-live.png" height="260" />
+								</div>
+							</td>
+							<td width="33%">
+								<div class="fragment" style="text-align: center">
+									<p>AFOL</p>
+									<img src="./images/afol.jpg" height="260" />
+								</div>
+							</td>
+							<td width="33%">
+								<div class="fragment" style="text-align: center">
+									<p>Comédien</p>
+									<img src="./images/comedian.png" height="260"/>
+								</div>
+							</td>
+						</tr>
+					</table>
+					<aside class="notes">
+						<p>Mais avant ça, qui suis-je ?</p>
+
+						<ul>
+							<li><p>Je viens de l'Aube, mon code postal est binaire : 10100</p></li>
+							<li>Fan de Legos, j'attends avec impatience un Sympony en brique, voilà, le message est passé :)</li>
+							<li>Dans mon temps libre, un peu comme aujourd'hui, il m'arrive d'arrêter de parler aux ordinateurs et de monter sur scène pour parler à des humains :)</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section>
+					<h3>Actuellement</h3>
+					<div>
+						<p>Co-founder & CTO @ Vasco.fund</p>
+						<img src="./images/illustration_vasco.png" height="300" />
+					</div>
+				</section>
+
+				<section>
+					<h1 style="margin-bottom: 0">1.</h1>
+					<h3 style="margin-bottom: 80px">Quel est le problème à résoudre ?</h3>
+				</section>
+
+				<section>
+					<h3>Historique</h3>
+					<img src="images/password-to-2fa.svg" height="550"/>
+
+					<aside class="notes">
+						<p><a href="https://fr.wikipedia.org/wiki/Fernando_Corbat%C3%B3" target="_blank"><strong>60's :</strong></a> Fernando Corbato : il est reconnu comme le premier à avoir introduit un système de mot de passe en informatique dans les annés 60</p>
+						<p><a href="https://fr.wikipedia.org/wiki/SecurID" target="_blank"><strong>1987 :</strong></a>première authentification à 2 facteurs, introduite par RSA security. Génère 6 chiffres sur la base d'un secret partagé.</p>
+						<p><a href="https://security.googleblog.com/2011/07/2-step-verification-stay-safe-around.html" target="_blank"><strong>2011 :</strong></a> Google lance le 2FA pour accéder à son compte</p>
+						<p>Petite question : Selon vous, combien de temps pour cracker un mot de passe de 8 caractères avec des chiffres et des lettres minuscules / majuscule ? 3 ans</p>
+					</aside>
+				</section>
+
+				<section>
+					<h3>Brute force</h3>
+					<p>
+						<img src="images/etude-hive-systems-mots-de-passe.jpg" alt="Durée nécessaire pour le brute force" height="550" />
+					</p>
+					<aside class="notes">
+						<p>3 ans.</p>
+						<p>Et vous pourrez voir sur ce graphique à quel point vous êtes protégé du brute force.</p>
+						<p>Qui utilise un gestionnaire de mot de passe pour avoir des mots de passes aléatoires ?</p>
+						<p>Mais si vous réutilisez votre mot de passe sur d'autre site, vous n'êtes plus protégé.</p>
+					</aside>
+				</section>
+				<section>
+					<h3>Réutilisation sur de nombreux sites</h3>
+					<img src="images/haveibeenpwned.png"/>
+					<aside class="notes">
+						<p>J'ai pris 3 sites essentiels à tous les développeurs</p>
+						<p>Cryptographie basique pour Adobe</p>
+						<p>MD5 sans sel pour Domino's pizza</p>
+						<p>Sha1 sans sel pour Linked In</p>
+						<p>Une fois ces mots de passes déchiffrés, ils pouvaient être testés sur d'autres sites</p>
+						<p>Et je passe le fait que les gens mettent toujours en 2025 des mots de passe comme 123456 et azerty</p>
+					</aside>
+				</section>
+				<section>
+					<h3>Phishing</h3>
+					<img src="images/phishing-google.png"/>
+					<aside class="notes">
+						<p>Ok, donc votre site n'accepte que les mots de passe sécurisés, vos clients ou admins ne réutilisent pas les mêmes entre différents sites, mais en cas de phishing, c'est très facile de contrôler un compte puisque vous n'avez qu'une barrière</p>
+						<p>Et quelques fois, même pas besoin de déployer l'artillerie lourde pour récupérer un mot de passe... Qui se souvient du piratage de TV5 monde ? Suite à ce piratage un responsable a donné une interview à France 3</p>
+					</aside>
+				</section>
+				<section>
+					<video data-autoplay src="images/tv5-mot-passe.mp4" width="100%"></video>
+				</section>
+				<section>
+					<h3>2FA / MFA</h3>
+					<img src="images/2FA.svg">
+					<aside class="notes">
+						<p>En général le premier facteur d'authentification c'est un mot de passe.</p>
+						<p>et le 2ème facteur, en général, c'est notre téléphone : application de générateur de code (Google/Microsoft Authenticator) ou réception d'un SMS</p>
+						<p>À éviter : Code envoyé par email : vous n'avez plus qu'un facteur d'authentification qui est l'accès à l'email</p>
+					</aside>
+				</section>
+				<section>
+					<h3>Utilisation du 2FA en entreprise</h3>
+					<img src="images/2FA-adoption-in-companies.svg">
+					<p>
+						<a href="https://www.lastpass.com/resources/reports/global-password-security-report">Source : Rapport LastPass</a>
+					</p>
+					<aside class="notes">
+						<p>Grosses différences également en terme de pays : 46% des employés au Danemark, vs 25% en France</p>
+						<p>2FA, c'est bien, mais ça reste toujours contraignant malgré les améliorations d'UX apportées au sein d'Android et d'iOS</p>
+					</aside>
+				</section>
+
+				<section>
+					<h1 style="margin-bottom: 0">2.</h1>
+					<h3 style="margin-bottom: 80px">Principe de WebAuthn</h3>
+					<aside class="notes">
+						<p>Le W3C a annoncé que WebAuthn devenait le standard officiel pour les connexions sans mot de passe en mars 2019</p>
+					</aside>
+				</section>
+
+				<section>
+					<h3>Qu'est ce que WebAuthn</h3>
+					<img src="images/what-is-webauthn.svg">
+				</section>
+
+				<section>
+					<h3>Utilisable à grande échelle</h3>
+					<p>
+						<img src="images/caniuse-webauthn.png" height="300">
+					</p>
+					<p class="fragment">
+						Modulo <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1536482">Firefox / TouchId</a>
+					</p>
+
+					<aside class="notes">
+						96% de compatibilité
+						Si vous utilisez une clé externe, aujourd'hui, c'est utilisable sans avoir à se poser de question.
+						Par contre, si vous êtes sur Mac et que vous utilisez Firefox, c'est un mauvais combo, Firefox n'a pas implémenté l'utilisation du TouchId (l'empreinte digitale)
+					</aside>
+				</section>
+
+				<section>
+					<h3>A quoi ça ressemble ?</h3>
+					<p>Enregistrement</p>
+					<pre data-id="code-animation"><code class="hljs js">
+const credential = await navigator.credentials.create({
+	publicKey: publicKeyCredentialCreationOptions
+});
+					</code></pre>
+				</section>
+
+				<section>
+					<h3>A quoi ça ressemble ?</h3>
+					<p >Authentification</p>
+					<pre data-id="code-animation"><code class="hljs js">
+const credential = await navigator.credentials.get({
+	publicKey: publicKeyCredentialRequestOptions
+});
+					</code></pre>
+				</section>
+
+				<section>
+					<h3>A quoi ça ressemble ?</h3>
+					<p>Et c'est tout ?</p>
+					<p class="fragment">Oui</p>
+				</section>
+
+				<section>
+					<h3>Bundles et librairies</h3>
+					<p>
+						<a href="https://github.com/lbuchs/webauthn">lbuchs: PHP Webauthn</a>
+					</p>
+					<p>
+						<a href="https://github.com/web-auth/webauthn-framework">Spomky-Labs: WebAuthn Framework</a>
+					</p>
+					<p>
+						<a href="https://github.com/madwizard-org/webauthn-server">Madwizard.org: WebAuthn PHP library</a>
+					</p>
+
+					<aside class="notes">
+						Coté front c'est tout, parce que pour le back, on va utiliser une librairie. On parle ici de mécanisme de sécurité, on parle de cryptographie, donc il vaut mieux s'appuyer sur des librairies de confiance.
+						Il existe plusieurs librairies PHP, mais ici, on va parler de la mise en place du bundle Symfony de Spomky-labs
+					</aside>
+				</section>
+
+				<section data-auto-animate>
+					<h3 data-id="code-title">Mécanisme derrière WebAuthn</h3>
+
+					<img src="images/public-private-key.svg" height="500">
+				</section>
+
+				<section data-auto-animate>
+					<h3 data-id="code-title">Mécanisme derrière WebAuthn</h3>
+
+					<img src="images/webauthn-credential-create.svg" height="500">
+				</section>
+
+				<section data-auto-animate>
+					<h3 data-id="code-title">Mécanisme derrière WebAuthn</h3>
+
+					<img src="images/webauthn-credential-get.svg" height="500">
+				</section>
+
+				<section>
+					<h1 style="margin-bottom: 0">3.</h1>
+					<h3 style="margin-bottom: 80px">Intégration avec Symfony</h3>
+				</section>
+
+				<section>
+					<h1 style="margin-bottom: 0">3.</h1>
+					<h3 style="margin-bottom: 80px">Intégration avec Symfony</h3>
+				</section>
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/zoom/zoom.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/search/search.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+
+			// Also available as an ES module, see:
+			// https://revealjs.com/initialization/
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				center: true,
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
+			});
+
+		</script>
+
+	</body>
+</html>
